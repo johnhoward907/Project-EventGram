@@ -1,35 +1,31 @@
-const jsonServer = require("json-server");
-const cors = require("cors");
-
-const server = jsonServer.create();
-const router = jsonServer.router("db.json");
-const middlewares = jsonServer.defaults();
-
-server.use(cors()); // Enable CORS
-server.use(middlewares);
-server.use(router);
-
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-    console.log(`JSON Server is running on port ${PORT}`);
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded, initializing photo gallery...");
+    initializePhotoGallery();
 });
 
-// Function to initialize the photo gallery
 function initializePhotoGallery() {
     const uploadInput = document.getElementById("photo-upload");
     const uploadBtn = document.getElementById("upload-btn");
     const photoContainer = document.getElementById("photo-container");
 
-    const apiUrl = "https://eventgram-ewtp.onrender.com/photos"; // Corrected port to match json-server
+    if (!uploadInput || !uploadBtn || !photoContainer) {
+        console.error("Error: One or more elements are missing in the HTML.");
+        return;
+    }
 
-    // Fetch and display images from server
+    console.log("Photo upload elements found, setting up event listeners...");
+
+    const apiUrl = "https://eventgram-ewtp.onrender.com/photos"; // JSON Server URL
+
     function loadGallery() {
+        console.log("Fetching photos from:", apiUrl);
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch photos.");
                 return response.json();
             })
             .then(photos => {
+                console.log("Photos loaded:", photos);
                 photoContainer.innerHTML = ""; // Clear before adding new photos
                 photos.forEach(addPhotoToGallery);
             })
@@ -43,9 +39,12 @@ function initializePhotoGallery() {
         photoContainer.appendChild(img);
     }
 
-    // Upload new photos
     uploadBtn.addEventListener("click", () => {
+        console.log("Upload button clicked!");
+
         const files = uploadInput.files;
+        console.log("Selected files:", files);
+
         if (files.length === 0) {
             alert("Please select at least one photo to upload.");
             return;
@@ -62,11 +61,12 @@ function initializePhotoGallery() {
                 return;
             }
 
+            console.log("Processing file:", file.name);
+
             const reader = new FileReader();
             reader.onload = () => {
                 const newPhoto = { url: reader.result };
 
-                // Save to local server
                 fetch(apiUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -76,7 +76,10 @@ function initializePhotoGallery() {
                     if (!response.ok) throw new Error("Failed to upload photo.");
                     return response.json();
                 })
-                .then(photo => addPhotoToGallery(photo)) // Add photo dynamically
+                .then(photo => {
+                    console.log("Photo uploaded successfully:", photo);
+                    addPhotoToGallery(photo); // Add photo dynamically
+                })
                 .catch(error => console.error("Error uploading photo:", error));
             };
             reader.readAsDataURL(file);
@@ -85,8 +88,5 @@ function initializePhotoGallery() {
         uploadInput.value = ""; // Clear input after upload
     });
 
-    loadGallery(); // Load images when page loads
+    loadGallery(); // Load images when the page loads
 }
-
-// Attach the named function to the DOM event listener
-
