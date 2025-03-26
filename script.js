@@ -20,7 +20,7 @@ function initializePhotoGallery() {
     const uploadBtn = document.getElementById("upload-btn");
     const photoContainer = document.getElementById("photo-container");
 
-    const apiUrl = "http://localhost:5000/photos"; // Corrected port to match json-server
+    const apiUrl = "https://eventgram-ewtp.onrender.com/photos"; // Corrected port to match json-server
 
     // Fetch and display images from server
     function loadGallery() {
