@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+header {
+    background: #007bff;
+    color: white;
+    padding: 20px;
+}
+
+h1 {
+    margin: 0;
+    background-color: bisque;
+    border-radius: 20px;
+    
+}
+
+main {
+    padding: 20px;
+}
+
+#upload-section {
+    background: white;
+    padding: 15px;
+    margin: 10px auto;
+    border-radius: 8px;
+    width: 50%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+input, button {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#gallery {
+    margin-top: 20px;
+}
+
+#photo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.photo-item {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
