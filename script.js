@@ -1,8 +1,11 @@
 const jsonServer = require("json-server");
+const cors = require("cors");
+
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
 
+server.use(cors()); // Enable CORS
 server.use(middlewares);
 server.use(router);
 
@@ -11,27 +14,33 @@ server.listen(PORT, () => {
     console.log(`JSON Server is running on port ${PORT}`);
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+// Function to initialize the photo gallery
+function initializePhotoGallery() {
     const uploadInput = document.getElementById("photo-upload");
     const uploadBtn = document.getElementById("upload-btn");
     const photoContainer = document.getElementById("photo-container");
 
-    const apiUrl = "http://localhost:3000/photos";
+    const apiUrl = "http://localhost:5000/photos"; // Corrected port to match json-server
 
     // Fetch and display images from server
     function loadGallery() {
         fetch(apiUrl)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to fetch photos.");
+                return response.json();
+            })
             .then(photos => {
                 photoContainer.innerHTML = ""; // Clear before adding new photos
-                photos.forEach(photo => {
-                    const img = document.createElement("img");
-                    img.src = photo.url;
-                    img.classList.add("photo-item");
-                    photoContainer.appendChild(img);
-                });
+                photos.forEach(addPhotoToGallery);
             })
             .catch(error => console.error("Error loading photos:", error));
+    }
+
+    function addPhotoToGallery(photo) {
+        const img = document.createElement("img");
+        img.src = photo.url;
+        img.classList.add("photo-item");
+        photoContainer.appendChild(img);
     }
 
     // Upload new photos
@@ -48,6 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         Array.from(files).forEach(file => {
+            if (!file.type.startsWith("image/")) {
+                alert("Only image files are allowed.");
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = () => {
                 const newPhoto = { url: reader.result };
@@ -58,7 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newPhoto)
                 })
-                .then(() => loadGallery())
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to upload photo.");
+                    return response.json();
+                })
+                .then(photo => addPhotoToGallery(photo)) // Add photo dynamically
                 .catch(error => console.error("Error uploading photo:", error));
             };
             reader.readAsDataURL(file);
@@ -68,4 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     loadGallery(); // Load images when page loads
-});
+}
+
+// Attach the named function to the DOM event listener
+
