@@ -1,5 +1,12 @@
 {
+  "name": "json-server",
+  "version": "1.0.0",
+  "description": "A simple JSON Server for storing game data",
+  "main": "index.js",
+  "scripts": {
+    "start": "node script.js"
+  },
   "dependencies": {
-    "json-server": "^1.0.0-beta.3"
+    "json-server": "^0.17.3"
   }
 }
