@@ -32,7 +32,7 @@ function initializePhotoGallery() {
 
     console.log("Photo upload elements found, setting up event listeners...");
 
-    const apiUrl = "https://eventgram-ewtp.onrender.com/photos"; // JSON Server URL
+    const apiUrl = "http://localhost:3000/photos"; // JSON Server URL
 
     function loadGallery() {
         console.log("Fetching photos from:", apiUrl);
