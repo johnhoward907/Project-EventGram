@@ -9,7 +9,7 @@ server.use(cors()); // Enable CORS
 server.use(middlewares);
 server.use(router);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`JSON Server is running on port ${PORT}`);
 });
@@ -18,18 +18,18 @@ server.listen(PORT, () => {
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded, initializing photo gallery...");
     initializePhotoGallery();
+    loadGallery(); // Load existing images
 });
 
 function initializePhotoGallery() {
     const uploadInput = document.getElementById("photo-upload");
     const uploadBtn = document.getElementById("upload-btn");
-    const photoContainer = document.getElementById("photo-container");
+    const photoContainer = document.querySelector("#gallery");
 
     if (!uploadInput || !uploadBtn || !photoContainer) {
         console.error("Error: One or more elements are missing in the HTML.");
         return;
     }
-
     console.log("Photo upload elements found, setting up event listeners...");
 
     const apiUrl = "http://localhost:3000/photos"; // JSON Server URL
@@ -48,12 +48,14 @@ function initializePhotoGallery() {
             })
             .catch(error => console.error("Error loading photos:", error));
     }
-
+    loadGallery();
     function addPhotoToGallery(photo) {
-        const img = document.createElement("img");
-        img.src = photo.url;
-        img.classList.add("photo-item");
-        photoContainer.appendChild(img);
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <img src="${photo.url}" alt="Event Photo" class="photo-item">
+            <button class="remove-btn">Remove</button>
+        `;
+        photoContainer.appendChild(div);
     }
 
     uploadBtn.addEventListener("click", () => {
@@ -105,5 +107,28 @@ function initializePhotoGallery() {
         uploadInput.value = ""; // Clear input after upload
     });
 
-    loadGallery(); // Load images when the page loads
+    // Remove photo event listener
+    photoContainer.addEventListener("click", (event) => {
+        if (event.target.classList.contains("remove-btn")) {
+            const photoDiv = event.target.parentElement;
+            const imgSrc = photoDiv.querySelector("img").src;
+            
+            // Remove from JSON Server
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(photos => {
+                    const photoToDelete = photos.find(photo => photo.url === imgSrc);
+                    if (photoToDelete) {
+                        fetch(`${apiUrl}/${photoToDelete.id}`, {
+                            method: "DELETE"
+                        })
+                        .then(() => {
+                            console.log("Photo deleted from server:", photoToDelete.id);
+                            photoDiv.remove();
+                        })
+                        .catch(error => console.error("Error deleting photo:", error));
+                    }
+                });
+        }
+    });
 }

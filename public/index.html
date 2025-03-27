@@ -3,15 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>EventGram - Memories Made Together</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body id="Home">
     <header>
+        <img id="logo" src="images/DALL·E 2025-03-27 10.16.25 - A bold and playful logo design for 'EventGram' with a black and orange theme. The design should incorporate a dynamic camera shutter or confetti eleme.webp" alt="EventGram Logo" id="logo">
         <h1>EventGram</h1>
         <p>Memories Made Together</p>
+        <nav>
+            <ul>
+                <li><a href="#Home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
     </header>
+    
     <button onclick="initializePhotoGallery()">Load Gallery</button>
+    
     <main>
         <section id="upload-section">
             <h2>Upload Your Event Photos</h2>
@@ -25,6 +36,6 @@
         </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
